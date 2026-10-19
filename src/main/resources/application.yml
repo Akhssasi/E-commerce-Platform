@@ -1,0 +1,84 @@
+spring:
+  application:
+    name: souqi-market
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/souqi}
+    username: ${DB_USER:souqi}
+    password: ${DB_PASSWORD:souqi}
+    hikari:
+      maximum-pool-size: 10
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+        default_batch_fetch_size: 50
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+  cache:
+    type: redis
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: notifications
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+  jackson:
+    default-property-inclusion: non_null
+
+server:
+  port: ${PORT:8080}
+  error:
+    include-message: always
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+market:
+  security:
+    jwt:
+      secret: ${JWT_SECRET:change-me-in-production-please-use-at-least-32-bytes-secret}
+      expiration-minutes: ${JWT_EXPIRATION_MINUTES:60}
+  outbox:
+    topic: ${OUTBOX_TOPIC:shop.orders.v1}
+    publisher-enabled: ${OUTBOX_PUBLISHER_ENABLED:true}
+    consumer-enabled: ${OUTBOX_CONSUMER_ENABLED:true}
+    poll-interval-ms: 2000
+  payment:
+    simulated-failure-rate: ${PAYMENT_FAILURE_RATE:0.05}
+  cache:
+    enabled: ${CACHE_ENABLED:true}
+  seed:
+    enabled: ${SEED_ENABLED:true}
+    admin-email: ${ADMIN_EMAIL:admin@souqi.local}
+    admin-password: ${ADMIN_PASSWORD:Admin@12345}

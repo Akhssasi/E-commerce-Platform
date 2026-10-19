@@ -1,0 +1,26 @@
+market:
+  cache:
+    enabled: false
+  outbox:
+    publisher-enabled: false
+    consumer-enabled: false
+  seed:
+    enabled: false
+  payment:
+    simulated-failure-rate: 0
+  security:
+    jwt:
+      secret: test-secret-key-that-is-long-enough-for-hs256-signing-123456
+      expiration-minutes: 30
+
+spring:
+  cache:
+    type: simple
+  kafka:
+    bootstrap-servers: localhost:19092
+    listener:
+      auto-startup: false
+
+logging:
+  level:
+    org.hibernate.SQL: WARN
