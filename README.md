@@ -1,9 +1,6 @@
 # Souqi Market — E-commerce Platform (Spring Boot 3.5 / Java 21)
 
-A capstone project that brings the whole course together in one application: a product catalog, cart,
-atomic order placement, a simulated payment gateway behind a circuit breaker, outbox events over Kafka
-and idempotent notification consumption — plus JWT security, OpenAPI documentation, integration tests
-and a Docker Compose deployment.
+Souqi Market is a Spring Boot e-commerce API. Customers register and log in, browse products, manage a cart, and place an order; the documented purchase flow checks idempotency, reserves stock, creates the order and an outbox event, then processes payment with a circuit-breaker fallback. A scheduled publisher forwards events to Kafka, where a consumer deduplicates notifications. The graph preserves catalog administration, Redis caching, and admin order access.
 
 ---
 
@@ -226,11 +223,4 @@ src/test/java/com/example/market
 - [x] Multi-stage Dockerfile + one-command Compose
 - [x] Order ownership check (a customer cannot read another customer's order)
 
----
 
-## 9) Interview talking points
-
-> "Atomic transactions and idempotency are the heart of reliable checkout: the stock lock prevents
-> overselling, and the idempotency key prevents double deduction on retries. I chose the outbox over
-> direct publishing because a Kafka outage during checkout would have lost the notification, and the
-> cost of one extra table and a small scheduler is cheaper than a lost event."
